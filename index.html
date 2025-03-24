@@ -1,13 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>DnD Character Manager</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.1.2/dist/tailwind.min.css" />
-  </head>
-  <body class="bg-gray-100 font-sans antialiased">
-    <div id="root"></div>
-  </body>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DnD Character Manager</title>
+  <style>
+    /* Add your styling here, similar to TailwindCSS classes used in the React code */
+    .container {
+      padding: 20px;
+    }
+
+    .card {
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .card-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .input,
+    .select,
+    .textarea {
+      padding: 10px;
+      border: 1px solid #ddd;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+
+    .button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      background-color: #0056b3;
+    }
+
+    .title {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .stat-input {
+      width: 60px;
+      margin-right: 5px;
+    }
+
+    .character-list {
+      margin-top: 20px;
+    }
+
+    .character-card {
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+
+    .character-name {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .character-details {
+      margin-bottom: 10px;
+    }
+
+    .character-stats {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1 class="title">DnD Character Manager</h1>
+
+    <div class="card">
+      <div class="card-content">
+        <h2 class="section-title">Create New Character</h2>
+        <div>
+          <label>Name</label>
+          <input type="text" id="character-name" class="input" placeholder="Name">
+        </div>
+        <div>
+          <label>Race</label>
+          <select id="character-race" class="select">
+            <option value="" disabled selected>Select Race</option>
+            <option value="Human">Human</option>
+            <option value="Elf">Elf</option>
+            <option value="Dwarf">Dwarf</option>
+            <option value="Halfling">Halfling</option>
+            <!-- Add more races here -->
+          </select>
+          <button class="button" onclick="randomizeRace()">Random Race</button>
+        </div>
+        <div>
+          <label>Class</label>
+          <select id="character-class" class="select">
+            <option value="" disabled selected>Select Class</option>
+            <option value="Barbarian">Barbarian</option>
+            <option value="Bard">Bard</option>
+            <option value="Cleric">Cleric</option>
+            <option value="Druid">Druid</option>
+            <!-- Add more classes here -->
+          </select>
+          <button class="button" onclick="randomizeClass()">Random Class</button>
+        </div>
+        <div>
+          <label>Level</label>
+          <input type="number" id="character-level" class="input" placeholder="Level">
+        </div>
+        <div>
+          <label>Background</label>
+          <input type="text" id="character-background" class="input" placeholder="Background">
+        </div>
+        <div class="stat-inputs">
+          <h3 class="section-title">Stats</h3>
+          <button class="button" onclick="rollStats()">Random Roll</button>
+          <div class="stats">
+            <label>Strength</label>
+            <input type="number" id="stat-str" class="stat-input">
+            <label>Dexterity</label>
+            <input type="number" id="stat-dex" class="stat-input">
+            <label>Constitution</label>
+            <input type="number" id="stat-con" class="stat-input">
+            <label>Intelligence</label>
+            <input type="number" id="stat-int" class="stat-input">
+            <label>Wisdom</label>
+            <input type="number" id="stat-wis" class="stat-input">
+            <label>Charisma</label>
+            <input type="number" id="stat-cha" class="stat-input">
+          </div>
+        </div>
+        <div>
+          <label>Backstory</label>
+          <textarea id="character-backstory" class="textarea" placeholder="Backstory"></textarea>
+        </div>
+        <button class="button" onclick="addCharacter()">Add Character</button>
+      </div>
+    </div>
+
+    <div class="character-list">
+      <h2 class="section-title">Your Characters</h2>
+      <!-- Characters will appear here -->
+    </div>
+  </div>
+
+  <script>
+    // Initialize character data
+    const characters = [];
+
+    // Handle adding characters
+    function addCharacter() {
+      const name = document.getElementById("character-name").value;
+      const race = document.getElementById("character-race").value;
+      const cls = document.getElementById("character-class").value;
+      const level = parseInt(document.getElementById("character-level").value);
+      const background = document.getElementById("character-background").value;
+      const stats = {
+        str: parseInt(document.getElementById("stat-str").value),
+        dex: parseInt(document.getElementById("stat-dex").value),
+        con: parseInt(document.getElementById("stat-con").value),
+        int: parseInt(document.getElementById("stat-int").value),
+        wis: parseInt(document.getElementById("stat-wis").value),
+        cha: parseInt(document.getElementById("stat-cha").value)
+      };
+      const backstory = document.getElementById("character-backstory").value;
+
+      const newCharacter = { name, race, class: cls, level, background, stats, backstory };
+      characters.push(newCharacter);
+      displayCharacters();
+    }
+
+    // Display characters in the list
+    function displayCharacters() {
+      const characterListDiv = document.querySelector(".character-list");
+      characterListDiv.innerHTML = '';
+
+      characters.forEach((char, index) => {
+        const characterCard = document.createElement("div");
+        characterCard.classList.add("character-card");
+        characterCard.innerHTML = `
+          <div class="character-name">${char.name}</div>
+          <div class="character-details">Race: ${char.race}, Class: ${char.class}, Level: ${char.level}</div>
+          <div class="character-stats">STR: ${char.stats.str}, DEX: ${char.stats.dex}, CON: ${char.stats.con}, INT: ${char.stats.int}, WIS: ${char.stats.wis}, CHA: ${char.stats.cha}</div>
+          <div class="character-details">Background: ${char.background}</div>
+          <div class="character-details">Backstory: ${char.backstory}</div>
+          <button class="button" onclick="editCharacter(${index})">Edit</button>
+        `;
+        characterListDiv.appendChild(characterCard);
+      });
+    }
+
+    // Randomize race and class
+    function randomizeRace() {
+      const races = ['Human', 'Elf', 'Dwarf', 'Halfling', 'Orc', 'Tiefling', 'Dragonborn', 'Gnome', 'Half-Elf', 'Half-Orc'];
+      document.getElementById("character-race").value = races[Math.floor(Math.random() * races.length)];
+    }
+
+    function randomizeClass() {
+      const classes = ['Barbarian', 'Bard', 'Cleric', 'Druid', 'Fighter', 'Monk', 'Paladin', 'Ranger', 'Rogue', 'Sorcerer', 'Warlock', 'Wizard'];
+      document.getElementById("character-class").value = classes[Math.floor(Math.random() * classes.length)];
+    }
+
+    // Randomize stats
+    function rollStats() {
+      const roll = () => Math.floor(Math.random() * 6) + 1 + Math.floor(Math.random() * 6) + 1 + Math.floor(Math.random() * 6) + 1;
+      document.getElementById("stat-str").value = roll();
+      document.getElementById("stat-dex").value = roll();
+      document.getElementById("stat-con").value = roll();
+      document.getElementById("stat-int").value = roll();
+      document.getElementById("stat-wis").value = roll();
+      document.getElementById("stat-cha").value = roll();
+    }
+  </script>
+</body>
+
 </html>
